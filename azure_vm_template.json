@@ -1,0 +1,103 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_Prod_Server_name": {
+            "defaultValue": "Prod-Server",
+            "type": "String"
+        },
+        "disks_Prod_Server_OsDisk_1_7a4dd26d4f7e4319a1c813fbd6480ab1_externalid": {
+            "defaultValue": "/subscriptions/3b652f50-e2f4-46eb-bfc7-b7131ee3b2ed/resourceGroups/OGAETANO/providers/Microsoft.Compute/disks/Prod-Server_OsDisk_1_7a4dd26d4f7e4319a1c813fbd6480ab1",
+            "type": "String"
+        },
+        "networkInterfaces_prod_server845_z1_externalid": {
+            "defaultValue": "/subscriptions/3b652f50-e2f4-46eb-bfc7-b7131ee3b2ed/resourceGroups/ogaetano/providers/Microsoft.Network/networkInterfaces/prod-server845_z1",
+            "type": "String"
+        },
+        "networkInterfaces_internal_externalid": {
+            "defaultValue": "/subscriptions/3b652f50-e2f4-46eb-bfc7-b7131ee3b2ed/resourceGroups/ogaetano/providers/Microsoft.Network/networkInterfaces/internal",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2024-03-01",
+            "name": "[parameters('virtualMachines_Prod_Server_name')]",
+            "location": "eastus2",
+            "zones": [
+                "1"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2s_v3"
+                },
+                "additionalCapabilities": {
+                    "hibernationEnabled": false
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-datacenter-gensecond",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(parameters('virtualMachines_Prod_Server_name'), '_OsDisk_1_7a4dd26d4f7e4319a1c813fbd6480ab1')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS",
+                            "id": "[parameters('disks_Prod_Server_OsDisk_1_7a4dd26d4f7e4319a1c813fbd6480ab1_externalid')]"
+                        },
+                        "deleteOption": "Delete",
+                        "diskSizeGB": 127
+                    },
+                    "dataDisks": [],
+                    "diskControllerType": "SCSI"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_Prod_Server_name')]",
+                    "adminUsername": "manager",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": false,
+                        "patchSettings": {
+                            "patchMode": "Manual",
+                            "assessmentMode": "ImageDefault",
+                            "enableHotpatching": false
+                        }
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_prod_server845_z1_externalid')]",
+                            "properties": {
+                                "primary": true,
+                                "deleteOption": "Delete"
+                            }
+                        },
+                        {
+                            "id": "[parameters('networkInterfaces_internal_externalid')]",
+                            "properties": {
+                                "primary": false
+                            }
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true
+                    }
+                },
+                "licenseType": "Windows_Server"
+            }
+        }
+    ]
+}
