@@ -37,7 +37,7 @@
     "networkSecurityGroupName": "NSG",
     "networkSecurityGroupName2": "[format('{0}-nsg', variables('subnet2Name'))]",
 	"adminUsername": "manager",
-	"adminPassword": "Blowfish2024*"
+	"adminPassword": "ManagerPass"
     },
   "resources": [
     {
